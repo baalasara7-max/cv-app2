@@ -478,14 +478,15 @@ def score_autres_criteres(ex: Dict[str, Any], spec: Dict[str, Any]) -> Tuple[flo
     if ex.get("diplomes_obtenus") or ex.get("certifications"):
         pts += w_dc
 
-    # Localisation
+   # Localisation
     want_loc = (spec.get("localisation") or "").strip()
     if want_loc:
-        ex_loc = _str(ex.get("localisation")).lower()
+        # Correction ici : on utilise _str() AVANT le .lower() pour éviter le crash
+        ex_loc = _str(ex.get("localisation", "")).lower()
+        
         ok = any(seg.strip().lower() in ex_loc for seg in want_loc.split("|") if seg.strip())
         if ok:
             pts += w_locd / 2
-
     # Disponibilité
     dmax = spec.get("disponibilite_max_semaines", None)
     dval = _num(ex.get("disponibilite_semaines"))
